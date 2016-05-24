@@ -8,11 +8,14 @@
 
 double LeftRectangle(double, double, unsigned);
 double TheSimpsons(double, double, unsigned);
+double(*func)(double, double, unsigned);
 double Exp(double);
 
 int main(void)
 {
 	double BeginSegm, EndSegm, PreviosIntegral = 0, NextIntegral = 1, Epsilon;
+	bool choice;
+
 	unsigned n;
 	while (TRUE)
 	{
@@ -22,25 +25,28 @@ int main(void)
 		printf("\nParameters are incorrect!!! Try ”“again!!!\n");
 	}
 	system("cls");
+	printf("\nWhich formula you want to use? \nPress 0 for the formula left rectangles or 1 for the composite Simpson formula: ");
+	scanf("%i", &choice);
+
+	if (choice) func = &TheSimpsons;
+	else func = &LeftRectangle;
 
 	while (fabs(PreviosIntegral - NextIntegral) > Epsilon)
 	{
-		PreviosIntegral = LeftRectangle(BeginSegm, EndSegm, n);
-		NextIntegral = LeftRectangle(BeginSegm, EndSegm, 2 * n);
+		PreviosIntegral = (*func)(BeginSegm, EndSegm, n);
+		NextIntegral = (*func)(BeginSegm, EndSegm, 2 * n);
 		n = 2 * n;
 	}
-	printf("\nThe value of integral (The formula left rectangles) of function exp(1/x) on segment ");
-	printf("[%f,%f] is equal %10.6f", BeginSegm, EndSegm, NextIntegral);
-
-	PreviosIntegral = 0, NextIntegral = 1;
-	while (fabs(PreviosIntegral - NextIntegral) > Epsilon)
+	if (choice)
 	{
-		PreviosIntegral = TheSimpsons(BeginSegm, EndSegm, n);
-		NextIntegral = TheSimpsons(BeginSegm, EndSegm, 2 * n);
-		n = 2 * n;
+		printf("\nThe value of integral (The composite Simpson formula) of function exp(1/x) on segment");
+		printf("[%f,%f] is equal %10.6f", BeginSegm, EndSegm, NextIntegral);
 	}
-	printf("\nThe value of integral (The composite Simpson formula) of function exp(1/x) on segment ");
-	printf("[%f,%f] is equal %10.6f", BeginSegm, EndSegm, NextIntegral);
+	else
+	{
+		printf("\nThe value of integral (The formula left rectangles) of function exp(1/x) on segment ");
+		printf("[%f,%f] is equal %10.6f", BeginSegm, EndSegm, NextIntegral);
+	}
 	printf("\nPress any key to exit...");
 	getch();
 	return 0;
@@ -68,7 +74,7 @@ double TheSimpsons(double LowerLimit, double UpperLimit, unsigned k)
 	double t = LowerLimit;
 	while (t < UpperLimit)
 	{
-		t = t + 2*Step;
+		t = t + 2 * Step;
 		Integral1 = Integral1 + Exp(t);
 		i++;
 	}
@@ -76,9 +82,9 @@ double TheSimpsons(double LowerLimit, double UpperLimit, unsigned k)
 	while (t < UpperLimit)
 	{
 		Integral2 = Integral2 + Exp(t);
-		t = t + 2*Step;
+		t = t + 2 * Step;
 	}
-	Integral = (Step/3) * (Exp(LowerLimit) + 2*Integral1 + 4*Integral2 + Exp(UpperLimit)) ;
+	Integral = (Step / 3) * (Exp(LowerLimit) + 2 * Integral1 + 4 * Integral2 + Exp(UpperLimit));
 	return Integral;
 }
 
